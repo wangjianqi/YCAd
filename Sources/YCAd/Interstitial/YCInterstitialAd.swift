@@ -52,7 +52,7 @@ public final class YCInterstitialAd: YCFullScreenAd {
         guard state == .ready else { throw YCAdError.notReady }
 
         state = .showing
-        let box = YCPresentBox(adType: .interstitial) { [weak self] in
+        let box = YCPresentBox(adType: .interstitial) { [weak self] _ in
             // dismiss / 失败后清理
             self?.ad = nil
             self?.box = nil

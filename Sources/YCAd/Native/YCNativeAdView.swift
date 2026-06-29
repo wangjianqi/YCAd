@@ -39,7 +39,7 @@ public struct YCNativeAdView: UIViewRepresentable {
 
 /// UIKit 容器：实际持有 NativeAdView 与子视图
 @MainActor
-final class YCNativeAdContainerView: UIView {
+public final class YCNativeAdContainerView: UIView {
 
     private var nativeAdView: NativeAdView?
     private var headlineLabel: UILabel!

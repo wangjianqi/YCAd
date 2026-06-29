@@ -133,10 +133,10 @@ public enum YCAdCenter {
 
         if let rating = configuration.maxAdContentRating {
             switch rating {
-            case .general:          reqConf.maxAdContentRating = GADMaxAdContentRatingGeneral
-            case .parentalGuidance: reqConf.maxAdContentRating = GADMaxAdContentRatingParentalGuidance
-            case .teen:             reqConf.maxAdContentRating = GADMaxAdContentRatingTeen
-            case .matureAudience:   reqConf.maxAdContentRating = GADMaxAdContentRatingMatureAudience
+            case .general:          reqConf.maxAdContentRating = GADMaxAdContentRating.general
+            case .parentalGuidance: reqConf.maxAdContentRating = GADMaxAdContentRating.parentalGuidance
+            case .teen:             reqConf.maxAdContentRating = GADMaxAdContentRating.teen
+            case .matureAudience:   reqConf.maxAdContentRating = GADMaxAdContentRating.matureAudience
             }
         }
     }

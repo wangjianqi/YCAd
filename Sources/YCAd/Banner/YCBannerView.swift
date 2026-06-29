@@ -86,17 +86,17 @@ public struct YCBannerView: UIViewRepresentable {
 
 /// 容器视图：让 BannerView 自动撑高 SwiftUI frame
 @MainActor
-final class BannerContainerView: UIView {
+public final class BannerContainerView: UIView {
     var bannerView: BannerView?
 
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .clear
     }
 
-    required init?(coder: NSCoder) { fatalError() }
+    public required init?(coder: NSCoder) { fatalError() }
 
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         // 让 SwiftUI 知道容器期望高度（按 banner intrinsicContentSize）
         if let banner = bannerView {
@@ -105,7 +105,7 @@ final class BannerContainerView: UIView {
         }
     }
 
-    override var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         if let banner = bannerView {
             return banner.intrinsicContentSize
         }

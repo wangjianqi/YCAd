@@ -64,7 +64,7 @@ public final class YCAppOpenAd: YCFullScreenAd {
         guard state == .ready else { throw YCAdError.notReady }
 
         state = .showing
-        let box = YCPresentBox(adType: .appOpen) { [weak self] in
+        let box = YCPresentBox(adType: .appOpen) { [weak self] _ in
             self?.ad = nil
             self?.box = nil
             self?.state = .finished(.dismissed)

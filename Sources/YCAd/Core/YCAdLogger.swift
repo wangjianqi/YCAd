@@ -90,18 +90,24 @@ public final class YCAdLogger: ObservableObject {
         customSink?(entry)
     }
 
-    /// 供非 @MainActor 上下文调用：内部 Task hop 到 main。
+    /// 供非 @MainActor 上下文调用：先在调用处求值字符串，再 Task hop 到 main。
+    /// 注意：与 `log(_:_:)` 不同，此处不做 lazy 求值（因 nonisolated 上下文无法
+    /// 读取 @MainActor 的 `level`；且 @autoclosure 闭包非 Sendable，无法跨 actor 发送）。
     nonisolated public static func debug(_ message: @autoclosure () -> String) {
-        Task { @MainActor in shared.log(.debug, message()) }
+        let msg = message()
+        Task { @MainActor in shared.log(.debug, msg) }
     }
     nonisolated public static func info(_ message: @autoclosure () -> String) {
-        Task { @MainActor in shared.log(.info, message()) }
+        let msg = message()
+        Task { @MainActor in shared.log(.info, msg) }
     }
     nonisolated public static func warn(_ message: @autoclosure () -> String) {
-        Task { @MainActor in shared.log(.warning, message()) }
+        let msg = message()
+        Task { @MainActor in shared.log(.warning, msg) }
     }
     nonisolated public static func error(_ message: @autoclosure () -> String) {
-        Task { @MainActor in shared.log(.error, message()) }
+        let msg = message()
+        Task { @MainActor in shared.log(.error, msg) }
     }
 
     /// 实际写到 os_log / print（不经过 buffer），保证 Release 关闭时也静默。

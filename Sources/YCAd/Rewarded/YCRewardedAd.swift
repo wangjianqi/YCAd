@@ -56,10 +56,10 @@ public final class YCRewardedAd: YCFullScreenAd {
 
         state = .showing
         let reward = ad.adReward
-        let box = YCPresentBox(adType: .rewarded) { [weak self] in
+        let box = YCPresentBox(adType: .rewarded) { [weak self] result in
             self?.ad = nil
             self?.box = nil
-            self?.state = .finished(box.result)
+            self?.state = .finished(result)
         }
         box.rewardInfo = YCRewardInfo(amount: reward.amount, type: reward.type)
         self.box = box

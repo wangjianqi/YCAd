@@ -83,47 +83,36 @@ public final class YCBannerAd: NSObject {
 }
 
 // MARK: - GADBannerViewDelegate
+// 协议方法已通过 NS_SWIFT_UI_ACTOR 标注为 @MainActor，无需 nonisolated + Task hop。
 
 extension YCBannerAd: BannerViewDelegate {
-    nonisolated func bannerViewDidReceiveAd(_ bannerView: BannerView) {
-        Task { @MainActor in
-            YCAdLogger.info("Banner 加载成功")
-            self.state = .ready
-            self.loadCont?.resume()
-            self.loadCont = nil
-        }
+    public func bannerViewDidReceiveAd(_ bannerView: BannerView) {
+        YCAdLogger.info("Banner 加载成功")
+        state = .ready
+        loadCont?.resume()
+        loadCont = nil
     }
 
-    nonisolated func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
-        Task { @MainActor in
-            YCAdLogger.error("Banner 加载失败: \(error.localizedDescription)")
-            self.state = .failed
-            self.loadCont?.resume(throwing: YCAdError.wrap(error))
-            self.loadCont = nil
-        }
+    public func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
+        YCAdLogger.error("Banner 加载失败: \(error.localizedDescription)")
+        state = .failed
+        loadCont?.resume(throwing: YCAdError.wrap(error))
+        loadCont = nil
     }
 
-    nonisolated func bannerViewDidRecordImpression(_ bannerView: BannerView) {
-        Task { @MainActor in
-            YCAdLogger.debug("Banner 曝光")
-        }
+    public func bannerViewDidRecordImpression(_ bannerView: BannerView) {
+        YCAdLogger.debug("Banner 曝光")
     }
 
-    nonisolated func bannerViewDidRecordClick(_ bannerView: BannerView) {
-        Task { @MainActor in
-            YCAdLogger.debug("Banner 点击")
-        }
+    public func bannerViewDidRecordClick(_ bannerView: BannerView) {
+        YCAdLogger.debug("Banner 点击")
     }
 
-    nonisolated func bannerViewWillPresentScreen(_ bannerView: BannerView) {
-        Task { @MainActor in
-            YCAdLogger.debug("Banner willPresentScreen")
-        }
+    public func bannerViewWillPresentScreen(_ bannerView: BannerView) {
+        YCAdLogger.debug("Banner willPresentScreen")
     }
 
-    nonisolated func bannerViewDidDismissScreen(_ bannerView: BannerView) {
-        Task { @MainActor in
-            YCAdLogger.debug("Banner didDismissScreen")
-        }
+    public func bannerViewDidDismissScreen(_ bannerView: BannerView) {
+        YCAdLogger.debug("Banner didDismissScreen")
     }
 }

@@ -408,7 +408,6 @@ extension YCAdDebugViewController: UITableViewDataSource, UITableViewDelegate {
         content.secondaryTextProperties.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         content.secondaryTextProperties.color = .secondaryLabel
         content.secondaryTextProperties.numberOfLines = 1
-        content.secondaryTextProperties.adjustsFontToFitWidth = true
         cell.contentConfiguration = content
         cell.selectionStyle = .none
         return cell

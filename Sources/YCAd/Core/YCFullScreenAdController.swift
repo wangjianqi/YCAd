@@ -4,7 +4,7 @@ import GoogleMobileAds
 
 /// 全屏广告（Interstitial / Rewarded / AppOpen）共享的 delegate→continuation 桥接器。
 ///
-/// v13 的 `FullScreenContentDelegate` 是回调式：adDidPresent / adDidDismiss / didFailToPresentContentWithError。
+/// v13 的 `FullScreenContentDelegate` 是回调式：adWillPresent / adDidDismiss / didFailToPresentContentWithError。
 /// `YCPresentBox` 把这些回调收敛为一次 `withCheckedThrowingContinuation` 的 resume：
 /// - didFailToPresent → resume(throwing:)
 /// - adDidDismiss     → resume(returning: result)
@@ -21,14 +21,14 @@ final class YCPresentBox: NSObject, FullScreenContentDelegate {
     /// 广告类型，用于日志
     let adType: YCAdType
 
-    /// dismiss / 失败后回调（供 owner 清理 ad 引用、切状态）
-    var onDismiss: (() -> Void)?
+    /// dismiss / 失败后回调（供 owner 清理 ad 引用、切状态），传入最终 result。
+    var onDismiss: ((YCAdShowResult) -> Void)?
 
     /// 仅 Rewarded 用：present 前注入的奖励信息（从 ad.adReward 读取）。
     /// userDidEarnReward completionHandler 触发时取出并写入 result。
     var rewardInfo: YCRewardInfo?
 
-    init(adType: YCAdType, onDismiss: @escaping () -> Void) {
+    init(adType: YCAdType, onDismiss: @escaping (YCAdShowResult) -> Void) {
         self.adType = adType
         self.onDismiss = onDismiss
         super.init()
@@ -42,43 +42,34 @@ final class YCPresentBox: NSObject, FullScreenContentDelegate {
     }
 
     // MARK: - FullScreenContentDelegate
+    // 协议方法已通过 NS_SWIFT_UI_ACTOR 标注为 @MainActor，无需 nonisolated + Task hop。
 
-    nonisolated func ad(_ ad: AnyObject, didFailToPresentContentWithError error: Error) {
-        Task { @MainActor in
-            YCAdLogger.error("present 失败 [\(self.adType.rawValue)]: \(error.localizedDescription)")
-            let nserr = error as NSError
-            let ycerr = YCAdError.presentFailed(code: nserr.code, message: nserr.localizedDescription)
-            self.cont?.resume(throwing: ycerr)
-            self.cont = nil
-            self.onDismiss?()
-        }
+    func ad(_ ad: AnyObject, didFailToPresentContentWithError error: Error) {
+        YCAdLogger.error("present 失败 [\(adType.rawValue)]: \(error.localizedDescription)")
+        let nserr = error as NSError
+        let ycerr = YCAdError.presentFailed(code: nserr.code, message: nserr.localizedDescription)
+        cont?.resume(throwing: ycerr)
+        cont = nil
+        onDismiss?(result)
     }
 
-    nonisolated func adDidDismissFullScreenContent(_ ad: AnyObject) {
-        Task { @MainActor in
-            YCAdLogger.info("dismiss [\(self.adType.rawValue)]")
-            self.cont?.resume(returning: self.result)
-            self.cont = nil
-            self.onDismiss?()
-        }
+    func adDidDismissFullScreenContent(_ ad: AnyObject) {
+        YCAdLogger.info("dismiss [\(adType.rawValue)]")
+        cont?.resume(returning: result)
+        cont = nil
+        onDismiss?(result)
     }
 
-    nonisolated func adDidPresentFullScreenContent(_ ad: AnyObject) {
-        Task { @MainActor in
-            YCAdLogger.debug("present 成功 [\(self.adType.rawValue)]")
-        }
+    func adWillPresentFullScreenContent(_ ad: AnyObject) {
+        YCAdLogger.debug("present 成功 [\(adType.rawValue)]")
     }
 
-    nonisolated func adDidRecordImpression(_ ad: AnyObject) {
-        Task { @MainActor in
-            YCAdLogger.debug("记录曝光 [\(self.adType.rawValue)]")
-        }
+    func adDidRecordImpression(_ ad: AnyObject) {
+        YCAdLogger.debug("记录曝光 [\(adType.rawValue)]")
     }
 
-    nonisolated func adDidRecordClick(_ ad: AnyObject) {
-        Task { @MainActor in
-            YCAdLogger.debug("记录点击 [\(self.adType.rawValue)]")
-        }
+    func adDidRecordClick(_ ad: AnyObject) {
+        YCAdLogger.debug("记录点击 [\(adType.rawValue)]")
     }
 }
 

@@ -35,11 +35,11 @@ public enum YCAdSize: Sendable {
     public func resolve(width: CGFloat) -> AdSize {
         switch self {
         case .adaptive:       return largeAnchoredAdaptiveBanner(width: width)
-        case .banner:         return kGADAdSizeBanner
-        case .largeBanner:    return kGADAdSizeLargeBanner
-        case .fullBanner:     return kGADAdSizeFullBanner
-        case .mediumRectangle: return kGADAdSizeMediumRectangle
-        case .leaderboard:    return kGADAdSizeLeaderboard
+        case .banner:         return AdSizeBanner
+        case .largeBanner:    return AdSizeLargeBanner
+        case .fullBanner:     return AdSizeFullBanner
+        case .mediumRectangle: return AdSizeMediumRectangle
+        case .leaderboard:    return AdSizeLeaderboard
         }
     }
 }

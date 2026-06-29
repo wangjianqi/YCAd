@@ -32,6 +32,7 @@ enum YCAdInternal {
     }
 
     /// 设备 ID（identifierForVendor）。供调试页面复制用。
+    @MainActor
     static var deviceID: String {
         UIDevice.current.identifierForVendor?.uuidString ?? ""
     }

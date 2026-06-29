@@ -22,7 +22,7 @@ let package = Package(
             name: "YCAd",
             dependencies: [
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
-                .product(name: "UserMessagingPlatform", package: "swift-package-manager-google-user-messaging-platform"),
+                .product(name: "GoogleUserMessagingPlatform", package: "swift-package-manager-google-user-messaging-platform"),
             ]
         ),
         .testTarget(

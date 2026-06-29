@@ -40,7 +40,7 @@ public enum YCAdCenter {
 
     /// SDK 版本号
     public static var sdkVersion: String {
-        MobileAds.shared.sdkVersion
+        string(for: MobileAds.shared.versionNumber)
     }
 
     /// 设备 ID（identifierForVendor），供调试页面复制
@@ -81,18 +81,10 @@ public enum YCAdCenter {
         let params = RequestParameters()
         YCAdLogger.info("UMP requestConsentInfoUpdate 开始")
 
-        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
-            ConsentInformation.shared.requestConsentInfoUpdate(with: params) { error in
-                if let error {
-                    cont.resume(throwing: error)
-                } else {
-                    cont.resume()
-                }
-            }
-        }
+        try await ConsentInformation.shared.requestConsentInfoUpdate(with: params)
 
         YCAdLogger.info("UMP loadAndPresentIfRequired 开始")
-        try await ConsentInformation.shared.loadAndPresentIfRequired(from: presenter)
+        try await ConsentForm.loadAndPresentIfRequired(from: presenter)
 
         let canReq = ConsentInformation.shared.canRequestAds
         YCAdLogger.info("UMP 完成，canRequestAds=\(canReq)")
@@ -134,15 +126,17 @@ public enum YCAdCenter {
         }
 
         if let underAge = configuration.tagForUnderAge {
-            reqConf.tagForUnderAge(ofConsent: underAge)
+            // v13 用 ageRestrictedTreatment 替代已废弃的 tagForUnderAgeOfConsent。
+            // true → .child；false → .unspecified（无特殊处理）。
+            reqConf.ageRestrictedTreatment = underAge ? .child : .unspecified
         }
 
         if let rating = configuration.maxAdContentRating {
             switch rating {
-            case .general:          reqConf.maxAdContentRating = .general
-            case .parentalGuidance: reqConf.maxAdContentRating = .parentalGuidance
-            case .teen:             reqConf.maxAdContentRating = .teen
-            case .matureAudience:   reqConf.maxAdContentRating = .matureAudience
+            case .general:          reqConf.maxAdContentRating = GADMaxAdContentRatingGeneral
+            case .parentalGuidance: reqConf.maxAdContentRating = GADMaxAdContentRatingParentalGuidance
+            case .teen:             reqConf.maxAdContentRating = GADMaxAdContentRatingTeen
+            case .matureAudience:   reqConf.maxAdContentRating = GADMaxAdContentRatingMatureAudience
             }
         }
     }

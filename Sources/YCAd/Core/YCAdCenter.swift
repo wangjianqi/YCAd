@@ -39,6 +39,19 @@ public enum YCAdCenter {
         if adsDisabled { throw YCAdError.disabled }
     }
 
+    /// 摇一摇调起调试页面（仅 DEBUG 生效）。设为 true 后任意页面摇动设备即可打开调试页。
+    /// Release 构建下 setter 为 no-op。
+    public static var enableShakeToDebug: Bool = false {
+        didSet {
+            #if DEBUG
+            if enableShakeToDebug {
+                YCAdShakeToDebug.install()
+            }
+            YCAdLogger.info("enableShakeToDebug 切换：\(oldValue) → \(enableShakeToDebug)")
+            #endif
+        }
+    }
+
     /// 当前配置（运行时可修改，如 testMode 切换）
     public static var configuration: YCAdConfiguration = .init() {
         didSet {

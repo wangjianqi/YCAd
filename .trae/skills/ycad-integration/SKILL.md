@@ -205,6 +205,19 @@ let vc = YCAdDebugViewController()
 present(UINavigationController(rootViewController: vc), animated: true)
 ```
 
+### 摇一摇调起（仅 DEBUG）
+
+开发期最便捷的入口：设一个开关后，任意页面摇动设备即可弹出调试页。
+
+```swift
+// App 启动时（仅 DEBUG）
+#if DEBUG
+YCAdCenter.enableShakeToDebug = true
+#endif
+```
+
+开启后任意页面摇一摇 → 自动 present `YCAdDebugViewController`（2 秒防抖，避免重复弹出）。Release 构建下 setter 为 no-op，无需手动移除。
+
 调试页面功能：
 - 查看 App ID / SDK 版本 / 设备 ID（可一键复制，用于 AdMob 测试设备注册）
 - **一键关闭所有广告（紧急刹车）**：运行时禁用所有 load/present，App Open 观察者也跳过
@@ -223,6 +236,7 @@ present(UINavigationController(rootViewController: vc), animated: true)
 | `canRequestAds: Bool` | 是否可请求广告（同意流程后） |
 | `adsDisabled: Bool` | 全局广告总开关，true 时所有 load/present 抛 `.disabled`，调试页面可切换 |
 | `guardAdsEnabled() throws` | 广告类入口检查，禁用时抛 `.disabled` |
+| `enableShakeToDebug: Bool` | 摇一摇调起调试页（仅 DEBUG 生效），true 时任意页面摇动弹出调试页 |
 | `configuration: YCAdConfiguration` | 当前配置（可运行时修改） |
 | `appID / sdkVersion / deviceID: String` | 只读信息 |
 | `resolve(adUnitID:for:) -> String` | 解析广告单元 ID（testMode 时返回测试 ID） |

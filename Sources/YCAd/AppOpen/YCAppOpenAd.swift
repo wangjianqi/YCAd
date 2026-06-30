@@ -37,6 +37,7 @@ public final class YCAppOpenAd: YCFullScreenAd {
     }
 
     public func load() async throws {
+        try YCAdCenter.guardAdsEnabled()
         guard state != .loading else { throw YCAdError.busy }
         let resolvedID = YCAdCenter.resolve(adUnitID: adUnitID, for: .appOpen)
         state = .loading
@@ -54,6 +55,7 @@ public final class YCAppOpenAd: YCFullScreenAd {
     }
 
     public func present(from vc: UIViewController?) async throws -> YCAdShowResult {
+        try YCAdCenter.guardAdsEnabled()
         guard let ad else { throw YCAdError.notReady }
         if isExpired { throw YCAdError.expired }
 

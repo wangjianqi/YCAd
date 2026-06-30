@@ -31,6 +31,7 @@ public final class YCNativeAd: ObservableObject {
     }
 
     public func load() async throws {
+        try YCAdCenter.guardAdsEnabled()
         guard state != .loading else { throw YCAdError.busy }
         let resolvedID = YCAdCenter.resolve(adUnitID: adUnitID, for: .native)
         state = .loading

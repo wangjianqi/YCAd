@@ -97,6 +97,11 @@ public final class YCAdDebugViewController: UIViewController {
         tableView.reloadSections(IndexSet(integer: Section.ad.rawValue), with: .none)
     }
 
+    @objc private func onToggleAdsDisabled(_ sw: UISwitch) {
+        vm.adsDisabled = sw.isOn
+        YCAdCenter.adsDisabled = sw.isOn
+    }
+
     @objc private func onSegmentIDMode(_ seg: UISegmentedControl) {
         vm.idMode = seg.selectedSegmentIndex == 0 ? .test : .real
         tableView.reloadSections(IndexSet(integer: Section.ad.rawValue), with: .none)
@@ -148,7 +153,7 @@ extension YCAdDebugViewController: UITableViewDataSource, UITableViewDelegate {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
         case .info:   return 6
-        case .config: return vm.testMode ? 4 : 3
+        case .config: return vm.testMode ? 5 : 4
         case .ad:     return adRowCount
         case .log:    return 1 + min(vm.logEntries.count, 200)
         case .none:   return 0
@@ -198,6 +203,17 @@ extension YCAdDebugViewController: UITableViewDataSource, UITableViewDelegate {
         switch row {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "switch", for: IndexPath(row: row, section: Section.config.rawValue))
+            cell.textLabel?.text = "关闭所有广告（紧急刹车）"
+            cell.textLabel?.textColor = .systemRed
+            let sw = UISwitch()
+            sw.isOn = vm.adsDisabled
+            sw.onTintColor = .systemRed
+            sw.addTarget(self, action: #selector(onToggleAdsDisabled), for: .valueChanged)
+            cell.accessoryView = sw
+            cell.selectionStyle = .none
+            return cell
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "switch", for: IndexPath(row: row, section: Section.config.rawValue))
             cell.textLabel?.text = "testMode（测试模式）"
             let sw = UISwitch()
             sw.isOn = vm.testMode
@@ -205,7 +221,7 @@ extension YCAdDebugViewController: UITableViewDataSource, UITableViewDelegate {
             cell.accessoryView = sw
             cell.selectionStyle = .none
             return cell
-        case 1:
+        case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "segment", for: IndexPath(row: row, section: Section.config.rawValue))
             cell.textLabel?.text = "ID 模式"
             let seg = UISegmentedControl(items: ["测试 ID", "真实 ID"])
@@ -215,7 +231,7 @@ extension YCAdDebugViewController: UITableViewDataSource, UITableViewDelegate {
             cell.accessoryView = seg
             cell.selectionStyle = .none
             return cell
-        case 2:
+        case 3:
             if vm.testMode {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: IndexPath(row: row, section: Section.config.rawValue))
                 cell.textLabel?.text = "testMode 开启时强制使用测试 ID"
@@ -226,7 +242,7 @@ extension YCAdDebugViewController: UITableViewDataSource, UITableViewDelegate {
             } else {
                 return logLevelCell(row: row)
             }
-        case 3:
+        case 4:
             return logLevelCell(row: row)
         default: return UITableViewCell()
         }

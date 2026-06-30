@@ -6,6 +6,8 @@ public enum YCAdError: Error, Sendable, Equatable {
     case notReady
     /// 广告已过期（如 App Open 4 小时未展示）
     case expired
+    /// 广告已被全局禁用（调试页面"一键关闭所有广告"开关）
+    case disabled
     /// 广告单元 ID 不合法
     case invalidAdUnitID
     /// 同意流程未完成，无法请求广告
@@ -55,6 +57,7 @@ extension YCAdError: LocalizedError {
         switch self {
         case .notReady:            return "广告未就绪"
         case .expired:             return "广告已过期"
+        case .disabled:            return "广告已被全局禁用"
         case .invalidAdUnitID:     return "广告单元 ID 不合法"
         case .consentRequired:     return "需要先完成 UMP 同意流程"
         case .busy:                return "已有广告正在加载或展示"

@@ -207,6 +207,7 @@ present(UINavigationController(rootViewController: vc), animated: true)
 
 调试页面功能：
 - 查看 App ID / SDK 版本 / 设备 ID（可一键复制，用于 AdMob 测试设备注册）
+- **一键关闭所有广告（紧急刹车）**：运行时禁用所有 load/present，App Open 观察者也跳过
 - 运行时切换 testMode、真实/测试广告单元 ID
 - 实时日志面板（订阅 `YCAdLogger.shared.entries`）
 - 调整日志级别
@@ -220,6 +221,8 @@ present(UINavigationController(rootViewController: vc), animated: true)
 | `configure(_:) async` | 初始化 SDK，传入 YCAdConfiguration |
 | `requestConsent(from:) async throws` | UMP 同意流程 |
 | `canRequestAds: Bool` | 是否可请求广告（同意流程后） |
+| `adsDisabled: Bool` | 全局广告总开关，true 时所有 load/present 抛 `.disabled`，调试页面可切换 |
+| `guardAdsEnabled() throws` | 广告类入口检查，禁用时抛 `.disabled` |
 | `configuration: YCAdConfiguration` | 当前配置（可运行时修改） |
 | `appID / sdkVersion / deviceID: String` | 只读信息 |
 | `resolve(adUnitID:for:) -> String` | 解析广告单元 ID（testMode 时返回测试 ID） |
@@ -262,7 +265,7 @@ public enum YCAdShowResult: Sendable, Equatable {
 
 ```swift
 public enum YCAdError: Error {
-    case notReady / expired / invalidAdUnitID / consentRequired
+    case notReady / expired / disabled / invalidAdUnitID / consentRequired
     case loadFailed(code:message:) / presentFailed(code:message:) / busy
 }
 ```

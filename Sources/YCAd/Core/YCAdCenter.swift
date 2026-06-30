@@ -26,6 +26,19 @@ public enum YCAdCenter {
         ConsentInformation.shared.canRequestAds
     }
 
+    /// 全局广告总开关（紧急刹车）。true 时所有广告的 load/present 直接抛 `.disabled`，
+    /// App Open 生命周期观察者也会跳过预加载与展示。调试页面可运行时切换。
+    public static var adsDisabled: Bool = false {
+        didSet {
+            YCAdLogger.info("adsDisabled 切换：\(oldValue) → \(adsDisabled)")
+        }
+    }
+
+    /// 供广告类在 load/present 入口调用：若已禁用则抛 `.disabled`。
+    public static func guardAdsEnabled() throws {
+        if adsDisabled { throw YCAdError.disabled }
+    }
+
     /// 当前配置（运行时可修改，如 testMode 切换）
     public static var configuration: YCAdConfiguration = .init() {
         didSet {

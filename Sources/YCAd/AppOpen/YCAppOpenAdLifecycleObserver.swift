@@ -64,6 +64,12 @@ public final class YCAppOpenAdLifecycleObserver {
     }
 
     private func handleBecomeActive() {
+        // 全局禁用时跳过
+        if YCAdCenter.adsDisabled {
+            YCAdLogger.debug("AppOpen adsDisabled，跳过")
+            return
+        }
+
         // 冷启动跳过
         if !hasLaunched {
             hasLaunched = true
@@ -95,6 +101,7 @@ public final class YCAppOpenAdLifecycleObserver {
     }
 
     private func preload() async {
+        guard !YCAdCenter.adsDisabled else { return }
         guard !isLoading else { return }
         guard let ad else { return }
         if ad.isReady { return }   // 已就绪

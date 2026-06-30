@@ -1,6 +1,33 @@
 {
-  "originHash" : "8b575700c868d736ce316ed16ff97920412000a340644c89a1596be2762b5bba",
+  "originHash" : "3fc6cdc087e2be022ff982e96d832e6f1e2321a328666342cd74dfd00e4167ee",
   "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire",
+      "state" : {
+        "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
+        "version" : "5.12.0"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher",
+      "state" : {
+        "revision" : "2ef543ee21d63734e1c004ad6c870255e8716c50",
+        "version" : "7.12.0"
+      }
+    },
+    {
+      "identity" : "progresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/relatedcode/ProgressHUD",
+      "state" : {
+        "revision" : "4aa638a88450d6d48a6620070722e875e7a179ef",
+        "version" : "14.1.4"
+      }
+    },
     {
       "identity" : "swift-package-manager-google-mobile-ads",
       "kind" : "remoteSourceControl",
@@ -17,6 +44,15 @@
       "state" : {
         "revision" : "13b248eaa73b7826f0efb1bcf455e251d65ecb1b",
         "version" : "3.1.0"
+      }
+    },
+    {
+      "identity" : "videoeditorkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/didisouzacosta/VideoEditorKit.git",
+      "state" : {
+        "revision" : "c917b1e99ddc631b754a43704c05dfe3836e8183",
+        "version" : "1.5.0"
       }
     }
   ],

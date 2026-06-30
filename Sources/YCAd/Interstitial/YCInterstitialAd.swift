@@ -28,6 +28,7 @@ public final class YCInterstitialAd: YCFullScreenAd {
     }
 
     public func load() async throws {
+        try YCAdCenter.guardAdsEnabled()
         guard state != .loading else { throw YCAdError.busy }
         let resolvedID = YCAdCenter.resolve(adUnitID: adUnitID, for: .interstitial)
         state = .loading
@@ -44,6 +45,7 @@ public final class YCInterstitialAd: YCFullScreenAd {
     }
 
     public func present(from vc: UIViewController?) async throws -> YCAdShowResult {
+        try YCAdCenter.guardAdsEnabled()
         guard let ad else { throw YCAdError.notReady }
         let presenter = vc ?? YCAdInternal.topmostViewController()
         guard let presenter else {

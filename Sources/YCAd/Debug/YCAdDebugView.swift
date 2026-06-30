@@ -59,6 +59,12 @@ public struct YCAdDebugView: View {
 
     private var configSection: some View {
         Section("配置") {
+            Toggle("关闭所有广告（紧急刹车）", isOn: $vm.adsDisabled)
+                .tint(.red)
+                .onChange(of: vm.adsDisabled) { _, newValue in
+                    YCAdCenter.adsDisabled = newValue
+                }
+
             Toggle("testMode（测试模式）", isOn: $vm.testMode)
                 .onChange(of: vm.testMode) { _, newValue in
                     YCAdCenter.configuration.testMode = newValue
@@ -210,6 +216,7 @@ final class YCAdDebugViewModel: ObservableObject {
     @Published var canRequestAds: Bool = false
     @Published var deviceID: String = ""
     @Published var testMode: Bool = false
+    @Published var adsDisabled: Bool = false
     @Published var idMode: IDMode = .test
     @Published var logLevel: YCAdLogLevel = .info
     @Published var adType: YCAdType = .interstitial
@@ -259,6 +266,7 @@ final class YCAdDebugViewModel: ObservableObject {
         canRequestAds = YCAdCenter.canRequestAds
         deviceID = YCAdCenter.deviceID
         testMode = YCAdCenter.configuration.testMode
+        adsDisabled = YCAdCenter.adsDisabled
         logLevel = YCAdLogger.shared.level
     }
 

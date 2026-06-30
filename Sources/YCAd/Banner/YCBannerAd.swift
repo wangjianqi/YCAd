@@ -32,6 +32,7 @@ public final class YCBannerAd: NSObject {
 
     /// 加载广告。
     public func load(width: CGFloat) async throws {
+        try YCAdCenter.guardAdsEnabled()
         guard state != .loading else { throw YCAdError.busy }
         let resolvedID = YCAdCenter.resolve(adUnitID: adUnitID, for: .banner)
         currentWidth = width

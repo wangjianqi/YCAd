@@ -99,9 +99,8 @@ public final class BannerContainerView: UIView {
     public override func layoutSubviews() {
         super.layoutSubviews()
         // 让 SwiftUI 知道容器期望高度（按 banner intrinsicContentSize）
-        if let banner = bannerView {
+        if bannerView != nil {
             invalidateIntrinsicContentSize()
-            _ = banner
         }
     }
 

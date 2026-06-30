@@ -130,7 +130,12 @@ final class YCAdTests: XCTestCase {
     func testYCAdError_localizedDescription() {
         XCTAssertNotNil(YCAdError.notReady.errorDescription)
         XCTAssertNotNil(YCAdError.expired.errorDescription)
+        XCTAssertNotNil(YCAdError.disabled.errorDescription)
         XCTAssertNotNil(YCAdError.loadFailed(code: 1, message: "x").errorDescription)
+    }
+
+    func testYCAdError_disabled_wrapPreserves() {
+        XCTAssertEqual(YCAdError.wrap(YCAdError.disabled), .disabled)
     }
 
     // MARK: - YCAdCenter ID Routing
@@ -182,6 +187,34 @@ final class YCAdTests: XCTestCase {
         config.testAdUnitIDs = [:]
         YCAdCenter.configuration = config
         XCTAssertEqual(YCAdInternal.currentTestAdUnitID(for: .rewarded), YCAdInternal.officialTestAdUnitIDs[.rewarded])
+    }
+
+    // MARK: - YCAdCenter adsDisabled
+
+    @MainActor
+    func testYCAdCenter_adsDisabled_defaultFalse() {
+        let original = YCAdCenter.adsDisabled
+        defer { YCAdCenter.adsDisabled = original }
+        YCAdCenter.adsDisabled = false
+        XCTAssertFalse(YCAdCenter.adsDisabled)
+    }
+
+    @MainActor
+    func testYCAdCenter_guardAdsEnabled_passesWhenNotDisabled() throws {
+        let original = YCAdCenter.adsDisabled
+        defer { YCAdCenter.adsDisabled = original }
+        YCAdCenter.adsDisabled = false
+        XCTAssertNoThrow(try YCAdCenter.guardAdsEnabled())
+    }
+
+    @MainActor
+    func testYCAdCenter_guardAdsEnabled_throwsDisabledWhenSet() {
+        let original = YCAdCenter.adsDisabled
+        defer { YCAdCenter.adsDisabled = original }
+        YCAdCenter.adsDisabled = true
+        XCTAssertThrowsError(try YCAdCenter.guardAdsEnabled()) { error in
+            XCTAssertEqual(error as? YCAdError, .disabled)
+        }
     }
 
     // MARK: - YCAdState

@@ -44,7 +44,7 @@ final class YCPresentBox: NSObject, FullScreenContentDelegate {
     // MARK: - FullScreenContentDelegate
     // 协议方法已通过 NS_SWIFT_UI_ACTOR 标注为 @MainActor，无需 nonisolated + Task hop。
 
-    func ad(_ ad: AnyObject, didFailToPresentContentWithError error: Error) {
+    func ad(_ ad: any FullScreenPresentingAd, didFailToPresentContentWithError error: Error) {
         YCAdLogger.error("present 失败 [\(adType.rawValue)]: \(error.localizedDescription)")
         let nserr = error as NSError
         let ycerr = YCAdError.presentFailed(code: nserr.code, message: nserr.localizedDescription)
@@ -53,22 +53,22 @@ final class YCPresentBox: NSObject, FullScreenContentDelegate {
         onDismiss?(result)
     }
 
-    func adDidDismissFullScreenContent(_ ad: AnyObject) {
+    func adDidDismissFullScreenContent(_ ad: any FullScreenPresentingAd) {
         YCAdLogger.info("dismiss [\(adType.rawValue)]")
         cont?.resume(returning: result)
         cont = nil
         onDismiss?(result)
     }
 
-    func adWillPresentFullScreenContent(_ ad: AnyObject) {
+    func adWillPresentFullScreenContent(_ ad: any FullScreenPresentingAd) {
         YCAdLogger.debug("present 成功 [\(adType.rawValue)]")
     }
 
-    func adDidRecordImpression(_ ad: AnyObject) {
+    func adDidRecordImpression(_ ad: any FullScreenPresentingAd) {
         YCAdLogger.debug("记录曝光 [\(adType.rawValue)]")
     }
 
-    func adDidRecordClick(_ ad: AnyObject) {
+    func adDidRecordClick(_ ad: any FullScreenPresentingAd) {
         YCAdLogger.debug("记录点击 [\(adType.rawValue)]")
     }
 }

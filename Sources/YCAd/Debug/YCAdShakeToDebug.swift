@@ -3,7 +3,7 @@ import UIKit
 
 /// 摇一摇调起调试页面（仅 DEBUG 生效）。
 ///
-/// 通过 swizzle `UIViewController.motionEnded(_:with:)` 实现全局监听。
+/// 通过 swizzle `UIResponder.motionEnded(_:with:)` 实现全局监听。
 /// 由 `YCAdCenter.enableShakeToDebug` 控制：设为 true 时安装 swizzle，
 /// 运行时仍可切换开关（false 时不响应摇动）。
 @MainActor
@@ -18,10 +18,10 @@ enum YCAdShakeToDebug {
         isInstalled = true
 
         let originalSelector = #selector(UIResponder.motionEnded(_:with:))
-        let swizzledSelector = #selector(UIViewController.yc_adMotionEnded(_:with:))
+        let swizzledSelector = #selector(UIResponder.yc_adMotionEnded(_:with:))
 
-        guard let originalMethod = class_getInstanceMethod(UIViewController.self, originalSelector),
-              let swizzledMethod = class_getInstanceMethod(UIViewController.self, swizzledSelector) else {
+        guard let originalMethod = class_getInstanceMethod(UIResponder.self, originalSelector),
+              let swizzledMethod = class_getInstanceMethod(UIResponder.self, swizzledSelector) else {
             YCAdLogger.warn("摇一摇 swizzle 安装失败：找不到方法")
             return
         }
@@ -31,7 +31,7 @@ enum YCAdShakeToDebug {
     }
 
     /// 摇动事件处理：防抖 + 找顶层 VC + present 调试页。
-    static func handleShakeIfNeeded(from vc: UIViewController) {
+    static func handleShakeIfNeeded() {
         guard YCAdCenter.enableShakeToDebug else { return }
 
         // 防抖：2 秒内只响应一次
@@ -58,13 +58,12 @@ enum YCAdShakeToDebug {
     }
 }
 
-extension UIViewController {
+extension UIResponder {
     @objc func yc_adMotionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        // swizzle 后此调用指向原 motionEnded 实现
         self.yc_adMotionEnded(motion, with: event)
 
         if motion == .motionShake {
-            YCAdShakeToDebug.handleShakeIfNeeded(from: self)
+            YCAdShakeToDebug.handleShakeIfNeeded()
         }
     }
 }
